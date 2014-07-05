@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<div id="timenow"></div>
+<div id="countdown"></div>
+
+<script>
+
+	var Nowtime ={
+		init:function(){
+				switch (arguments.length) {
+					case 1:
+						this.nowtime(arguments[0]);
+						break;
+					case 2:
+						this.countdown(arguments[0],arguments[1]);
+						break;
+				}
+				return this; //可以链式调用
+			},
+		
+		days: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'],
+		
+		add0: function(n){
+			  	 return n<10 ? ('0'+ n) : n;
+			  },
+		
+		nowtime : function(obj){
+				var that = this;
+				var today = new Date(),
+					month = today.getMonth()+1,
+					date = today.getDate(),
+					hours = today.getHours(),
+					minutes = today.getMinutes(),
+					seconds = today.getSeconds(),
+					msg = today.getFullYear() + '年' + (month<10 ? ('0'+ month) : month) + '月' +
+							(date<10 ? ('0'+ date) : date) + '日  ' + that.days[today.getDay()] + ' ' + (hours<10 ? ('0'+ hours) : hours) + ':' + 
+							(minutes<10 ? ('0'+ minutes) : minutes) + ':' + (seconds<10 ? ('0'+ seconds) : seconds); 
+								
+				obj.innerHTML = msg;
+				var tt = setTimeout(function(){that.nowtime(obj);},1000);				
+			},
+		countdown: function(obj,totime){ // totime 倒计时目标时间 格式为'20140506080855' 时分秒可以省略
+				if(typeof totime !== 'string') return false;
+				
+				var that = this;
+				var date1 = new Date();
+				var date2 = new Date();
+				
+				date2.setFullYear(totime.substr(0,4),totime.substr(4,2)-1,totime.substr(6,2));
+				date2.setHours(0,0,0);
+				if(totime.substr(8) !== ''){
+					if(totime.substr(8,2) !== '' ){
+						date2.setHours(totime.substr(8,2));
+						if(totime.substr(10,2) !== '' ){
+							date2.setMinutes(totime.substr(10,2));
+							if(totime.substr(12,2) !== '' ){
+								date2.setSeconds(totime.substr(12,2));
+							}
+						}
+					}
+				}
+				
+				var mms = date2.getTime() - date1.getTime();
+				
+				if(mms>0){
+					obj.innerHTML = Math.floor(mms/(1000*60*60*24)) + '天' + Math.floor((mms%(1000*60*60*24))/(1000*60*60)) + '时' +
+									Math.floor(mms%(1000*60*60)/(1000*60)) + '分' + Math.floor(mms%(1000*60)/1000) + '秒';
+				}
+				
+				var tt = setTimeout(function(){that.countdown(obj,totime);},1000);
+			}
+		
+	}
+	
+	Nowtime.init(document.getElementById('timenow')).init(document.getElementById('countdown'),'20150701');
+	
+</script>
+
+</body>
+</html>
