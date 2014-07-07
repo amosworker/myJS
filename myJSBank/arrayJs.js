@@ -2,8 +2,8 @@
 
 
 /*
- * ECMAScript 5 ¶¨ÒåÁËÒ»¸öĞÂ·½·¨Array.isArray()£¬¸Ãº¯ÊıÔÚ²ÎÊıÎªÊı×éÊÇ·µ»Øtrue£¬
- * ÔÚ²»Ö§³ÖµÄÇé¿öÏÂ¿ÉÒÔÓÃÒÔÏÂ·½·¨¼ì²â
+ * ECMAScript 5 å®šä¹‰äº†ä¸€ä¸ªæ–°æ–¹æ³•Array.isArray()ï¼Œè¯¥å‡½æ•°åœ¨å‚æ•°ä¸ºæ•°ç»„æ˜¯è¿”å›trueï¼Œ
+ * åœ¨ä¸æ”¯æŒçš„æƒ…å†µä¸‹å¯ä»¥ç”¨ä»¥ä¸‹æ–¹æ³•æ£€æµ‹
  */
 if(typeof Array.isArray === "undefined"){
 	Array.isArray = function(arg){

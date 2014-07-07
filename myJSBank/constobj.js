@@ -1,4 +1,4 @@
-//可以定义常量
+//鍙互瀹氫箟甯搁噺
 var constant = (function(){
 	var constants = {},
 	ownProp = Object.prototype.hasOwnProperty,
@@ -35,7 +35,7 @@ var constant = (function(){
 /*
  * example 
  */
-//检查是否已定义
+//妫�鏌ユ槸鍚﹀凡瀹氫箟
 constant.isDefined('maxwidth'); //false
 
 constant.set('maxwidth',480); //true

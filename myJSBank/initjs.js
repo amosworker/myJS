@@ -1,10 +1,10 @@
-//接口
+//鎺ュ彛
 var initobj = {
 	addListener:null,
 	removeListener:null
 };
 
-// 初始化时分支  的好处是不必每次调用时都要执行对应的函数
+// 鍒濆鍖栨椂鍒嗘敮  鐨勫ソ澶勬槸涓嶅繀姣忔璋冪敤鏃堕兘瑕佹墽琛屽搴旂殑鍑芥暟
 if(typeof window.addEventListener === 'function'){
 	initobj.addListener = function (el,type,fn){
 		el.addEventListener(type,fn,false);
