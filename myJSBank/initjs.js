@@ -63,9 +63,9 @@ Initobj.prototype={
 		return {wWidth:w,wHeight:h};
 	},
 
-	ScollPostion:function() {//滚动条位置
+	ScrollPostion:function() {//滚动条位置
         var t, l, w, h;
-        if (document.documentElement && document.documentElement.scrollTop) {
+        if (document.documentElement && (document.documentElement.scrollTop || document.documentElement.scrollLeft)) {
             t = document.documentElement.scrollTop;
             l = document.documentElement.scrollLeft;
             w = document.documentElement.scrollWidth;
