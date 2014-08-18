@@ -1,3 +1,6 @@
+var Ginitobj;
+
+
 //接口
 function Initobj () {
 	this.getwinW = function(){
@@ -112,6 +115,11 @@ Initobj.prototype={
 	}
 
 }
+
+Ginitobj = new Initobj(); //初始化Initobj对象
+
+
+
 
 //动态加载脚本
 function loadScript(url) {
