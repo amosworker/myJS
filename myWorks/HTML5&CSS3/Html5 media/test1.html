@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="Scripts/swfobject_modified.js" type="text/javascript"></script>
+	<style>
+		body { font-size:11px; font-family:verdana,georgia; line-height:14px; }
+		#progressBar { border:1px solid #aaa; color:#fff; width:292px; height:20px; }
+		#played { background-color:#aaa; height:20px; display:inline-block; }
+		
+		video{ opacity:0.5; -webkit-box-reflect:right 20px;}
+		video:hover{ opacity:1;}
+	</style>
+	<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+<video controls>
+	  <source src="movie.mp4" type="video/mp4"></source>
+      <source src="movie.webm" type="video/webm"></source>
+      <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="272" id="FLVPlayer">
+              <param name="movie" value="FLVPlayer_Progressive.swf" />
+              <param name="quality" value="high">
+              <param name="wmode" value="opaque">
+              <param name="scale" value="noscale">
+              <param name="salign" value="lt">
+              <param name="FlashVars" value="&amp;MM_ComponentVersion=1&amp;skinName=Clear_Skin_2&amp;streamName=movie&amp;autoPlay=false&amp;autoRewind=false" />
+              <param name="swfversion" value="8,0,0,0">
+              <!-- 此 param 标签提示使用 Flash Player 6.0 r65 和更高版本的用户下载最新版本的 Flash Player。如果您不想让用户看到该提示，请将其删除。 -->
+              <param name="expressinstall" value="Scripts/expressInstall.swf">
+              <!-- 下一个对象标签用于非 IE 浏览器。所以使用 IECC 将其从 IE 隐藏。 -->
+              <!--[if !IE]>-->
+              <object type="application/x-shockwave-flash" data="FLVPlayer_Progressive.swf" width="640" height="272">
+                <!--<![endif]-->
+                <param name="quality" value="high">
+                <param name="wmode" value="opaque">
+                <param name="scale" value="noscale">
+                <param name="salign" value="lt">
+                <param name="FlashVars" value="&amp;MM_ComponentVersion=1&amp;skinName=Clear_Skin_2&amp;streamName=movie&amp;autoPlay=false&amp;autoRewind=false" />
+                <param name="swfversion" value="8,0,0,0">
+                <param name="expressinstall" value="Scripts/expressInstall.swf">
+                <!-- 浏览器将以下替代内容显示给使用 Flash Player 6.0 和更低版本的用户。 -->
+                <div>
+                  <h4>此页面上的内容需要较新版本的 Adobe Flash Player。</h4>
+                  <p><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="获取 Adobe Flash Player" /></a></p>
+                </div>
+                <!--[if !IE]>-->
+              </object>
+              <!--<![endif]-->
+      </object>
+      <script>swfobject.registerObject("FLVPlayer");</script>
+  	</video>
+	<div id="controls">
+		<div id="progressBar"><span id="played"></span></div>
+		<button id="playpause" alt="play" title="play" onclick="togglePlay()">play</button>
+		<button id="stop" alt="stop" title="stop" onclick="stopVideo()">stop</button>
+		<button id="rewind" alt="rewind" title="rewind" onclick="changePlaybackSpeed('-');" >&laquo;</button>
+		<button id="ffwd" alt="fast forward" title="fast forward" onclick="changePlaybackSpeed('+');" >&raquo;</button>
+		<button id="volumeDown" alt="decrease volume" title="-" onclick="changeVolume('-')">-</button>
+		<button id="volumeUp" alt="increase volume" title="+" onclick="changeVolume('+')">+</button>
+		<button id="mute" alt="mute" title="mute" onclick="toggleMute()">mute</button>
+	</div>
+	<script>
+		// Grab a handle to the video object
+		var video = document.getElementsByTagName("video")[0];
+		// Turn off the default browser controls
+		video.controls = false;
+		// Grab a handle to the play/paus button object
+		var ppbutton = document.getElementById("playpause");		
+		
+		// Add event listeners to change the value of the play/pause button when the video is played or paused
+		video.addEventListener('play', function() {
+			ppbutton.title = "pause";
+			ppbutton.innerHTML = "pause";
+		}, false);
+		video.addEventListener('pause', function() {
+			ppbutton.title = "play";
+			ppbutton.innerHTML = "play";
+		}, false);
+		// Add an event listener to update the progress bar
+		video.addEventListener('timeupdate', updateProgress, false);
+		// Add an event listener to pause the video (which sorts out the play/pause button) when the video ends
+		video.addEventListener('ended', function() { this.pause(); }, false);
+		
+		// Stops the video from playing and resets it's currentTime to 0
+		function stopVideo() {
+			video.pause();
+			video.currentTime = 0;
+		}
+		
+		// Toggles the play/pause button between playing and pausing
+		function togglePlay() {
+			if (video.paused || video.ended) {
+				if (video.ended) video.currentTime = 0;
+				video.play();
+			}
+			else {
+				video.pause();
+			}
+		}
+		
+		// Changes the video's volume
+		function changeVolume(direction) {
+			var volume = Math.floor(video.volume * 10) / 10;
+			video.muted = false;
+			if (direction == "-") {
+				if (volume <= 0.1) video.volume = 0;
+				else video.volume -= 0.1;
+			}
+			else {
+				if (volume >= 0.9) video.volume = 1;
+				else video.volume += 0.1;   
+			}
+		}
+		
+		// Toggles the video's mute value
+		function toggleMute() {
+			var mute = document.getElementById("mute");
+			if (video.muted) {
+				mute.innerHTML = "mute";
+				video.muted = false;
+			}
+			else {
+				mute.innerHTML = "unmute";
+				video.muted = true;
+			}
+		}
+		
+		// Updates the progress bar
+		function updateProgress() {
+			var value = 0;
+			if (video.currentTime > 0) {
+				value = Math.floor((100 / video.duration) * video.currentTime);
+			}
+			document.getElementById("played").style.width = value + "%";
+		}
+
+		// Changes the playback speed of the video
+		function changePlaybackSpeed(direction) {
+			if (video.playbackRate != undefined) {
+				if (direction == "-") video.playbackRate -= 1;
+				else video.playbackRate += 1;
+			}
+			else {
+				if (direction == "-") video.currentTime -= 1;
+				else video.currentTime += 1;
+			}
+		}
+		
+		// Set the play position of the video based on the mouse click at x
+		function setPlayPosition(x) {				
+			var progressBar = document.getElementById("progressBar");
+			var value = (x - findPos(progressBar)).toFixed(2);
+			var timeToSet = ((video.duration / progressBar.offsetWidth).toFixed(2) * value).toFixed(2);
+			video.currentTime = timeToSet;
+		}
+		// Find the real position of obj
+		function findPos(obj) {
+			var curleft = 0;
+			if (obj.offsetParent) {
+				do { curleft += obj.offsetLeft; } while (obj = obj.offsetParent);
+			}
+			return curleft;
+		}			
+		// Add an event listener to listen for the mouseup event on the progress bar
+		var progressBar = document.getElementById("progressBar").addEventListener("mouseup", function(e) { setPlayPosition(e.pageX); }, false);
+    </script>
+</body>
+</html>

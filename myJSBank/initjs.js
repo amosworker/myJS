@@ -287,8 +287,32 @@ function preloadimages(arr){
 	}
 }
 
+//点击回到顶部 为obj对象赋予点击回到顶部事件
+function returnToTop(obj)
+{
+	var bSys=true; //用于区分是否是定时器触发的onscroll事件，true为定时器触发，false为用户触发
+	var timer=null;
+	
+	//如何检测用户拖动了滚动条
+	window.onscroll=function (){
+		if(!bSys) clearInterval(timer);
+		bSys=false;
+	};
+	
+	Initobj.addListener(obj,"click",function(){
+		timer=setInterval(function (){
+			var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+			var iSpeed=Math.floor(-scrollTop/8);
+			
+			if(scrollTop==0) clearInterval(timer);
+			
+			bSys=true;
+			document.documentElement.scrollTop=document.body.scrollTop=scrollTop+iSpeed;
+		}, 30);
+	});
+};
 
-
+//取得host
 function getHost (url) {
     var host = "null";
     if (typeof url == "undefined"

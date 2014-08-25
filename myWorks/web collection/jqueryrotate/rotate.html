@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<title>jQuery 任意角度旋转</title> 
+<style type="text/css"> 
+body {padding: 0; margin: 0;}  
+body,html{height: 100%;}  
+#outer {width: 100%; height: 100%; overflow: hidden; position: relative; } 
+#middle { *position: absolute; top: 50%; *left: 50%; text-align:center; } /* for explorer only*/  
+#middle[id] { display: table-cell; vertical-align: middle; position: static; *position: absolute; } 
+#inner {position: relative; top: -50%; *left: -50%; margin: 0 auto; } /* for explorer only */ 
+#outer[id] {display: table; position: static;} 
+</style> 
+<script type="text/javascript" src="jquery-1.6.4.min.js"></script> 
+<script type="text/javascript" src="rotate.jquery.js"></script> 
+</head> 
+<body> 
+<div id="outer"> 
+ <div id="middle"> 
+  <div id="inner" style="border:red 2px solid;width:300px;height:300px;padding:3px;"><img id="theimage" border="0" src="ad-bamboo.jpg" /></div> 
+ </div>  
+</div> 
+<div style="position: relative;height:40px;margin-top:-40px;"> 
+<input type="button" value="<-Rotate" name="RotateL" id="RotateL"> 
+<input type="button" value="Rotate->" name="RotateR" id="RotateR"> 
+<script>
+	$('#RotateL').click(function(){
+		$('#theimage').rotate(30);
+	});
+	$('#RotateR').click(function(){
+		$('#theimage').rotate(-30);
+	});
+</script>
+</div> 
+</body> 
+</html> 
