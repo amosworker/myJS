@@ -399,3 +399,19 @@ function getHost (url) {
     }
     return host;
 }
+
+
+//检查浏览器是否支持input的类型
+/*
+	example:
+		if(!inputSupport("data")){
+			alert("the data input type is not supported");
+		}
+*/
+function inputSupport(inputType){
+	var input = document.createElement('input');
+	input.setAttribute("type",inputType);
+	var val= (input.type !== "text");
+	delete input;
+	return val;
+}
