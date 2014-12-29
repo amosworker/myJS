@@ -48,9 +48,9 @@ Initobj.prototype={
 					};
 		}
 	}()),
-
+	
 	windowWH:function(){
-		var h=window.innnerHeight;
+		var h=window.innerHeight;
 		var w=window.innerWidth;
 		
 		if (typeof h != "number"){
@@ -415,3 +415,75 @@ function inputSupport(inputType){
 	delete input;
 	return val;
 }
+
+//为window对象添加contains方法 
+;(function(exports){
+    exports.contains = function(pel, cel){ //验证cel节点被pel节点包含
+        // ie
+        if (pel.contains){
+            return pel.contains(cel);
+        }
+        else if(pel.compareDocumentPosition){
+            return !!pel.compareDocumentPosition(cel) & 16;
+        }
+        else{
+            var p;
+            while ((p = cel.parentNode) && p.nodeType === 1){
+                if (pel === p) return true;
+            }
+            return true;
+        }
+    };
+}(window));
+
+
+//检测系统、浏览器版本、引擎、是否为移动端
+var browser = (function(){
+  var userAgent = navigator.userAgent,
+  ua = userAgent.toLowerCase(),
+  browserList = {
+    msie : /(?:msie\s|trident.*rv:)([\w.]+)/i,
+    firefox : /Firefox\/([\w.]+)/i,
+    chrome : /Chrome\/([\w.]+)/i,
+    safari : /version\/([\w.]+).*Safari/i,
+    opera : /(?:OPR\/|Opera.+version\/)([\w.]+)/i
+  },
+  kernels = {
+    MSIE: /(compatible;\smsie\s|Trident\/)[\w.]+/i,
+    Camino: /Camino/i,
+    KHTML: /KHTML/i,
+    Presto: /Presto\/[\w.]+/i,
+    Gecko : /Gecko\/[\w.]+/i,
+    WebKit: /AppleWebKit\/[\w.]+/i
+  },
+  browser = {
+    kernel : 'unknow',
+    version : 'unknow'
+  };
+
+  // 检测浏览器
+  for(var i in browserList){
+    var matchs = ua.match(browserList[i]);
+    browser[i] = matchs ? true : false;
+    if(matchs){
+      browser.version = matchs[1];
+    }
+  }
+
+  // 检测引擎
+  for(var i in kernels){
+    var matchs = ua.match(kernels[i]);
+    if(matchs){
+      browser.kernel = matchs[0];
+    }
+  }
+
+  // 系统
+  var os = ua.match(/(Windows\sNT\s|Mac\sOS\sX\s|Android\s|ipad.*\sos\s|iphone\sos\s)([\d._-]+)/i);
+  browser.os = os!==null ? os[0] : false;
+
+  // 是否移动端
+  browser.mobile = ua.match(/Mobile/i)!==null ? true : false;
+
+  return browser;
+}());
