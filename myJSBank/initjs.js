@@ -487,3 +487,27 @@ var browser = (function(){
 
   return browser;
 }());
+
+
+
+/**
+ * 特性检查浏览器是否支持css3等属性
+ * @method isSupport
+ * @param {property} 需要检查的css属性
+ * @return {true or false} 真或假
+ */
+function isSupport (property) {
+    var prefix = ["", "webkit", "Moz", "ms", "o"],
+        i = prefix.length,
+        style = document.createElement("div").style;
+
+    while (i--) {
+        if (!prefix[i]) {
+            if ((prefix[i] + property) in style) return true;
+        } else {
+            if ((prefix[i] + property.substr(0, 1).toUpperCase() + property.substr(1)) in style) return true;
+        }
+    }
+
+    return false;
+}
