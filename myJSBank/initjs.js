@@ -489,6 +489,31 @@ var browser = (function(){
 }());
 
 
+/**
+ * 特性检查浏览器是移动端还是PC端的浏览器
+ */
+function browserRedirect() {
+    var isPC = 0;
+    var isMobile = 0;
+    var sUserAgent = navigator.userAgent.toLowerCase();
+    var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+    var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+    var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+    var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+    var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+    var bIsAndroid = sUserAgent.match(/android/i) == "android";
+    var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+    var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+    
+    if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+       isMobile=1;
+    } else {
+       isPC = 1;
+    }
+    
+    return {isMobile:isMobile, isPC:isPC};
+}
+
 
 /**
  * 特性检查浏览器是否支持css3等属性
