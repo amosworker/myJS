@@ -267,16 +267,18 @@ function getStyle(elem,pro){
 } 
 
 /**
-	Javascript实现图片的预加载的完整实现
-	preloadimages(url, ready, load, error)
-	example:
-		preloadimages(imgsrc,function(){
-			iw=this.width;
-			ih=this.height;
-			itop = Math.floor(lis.eq(0).offset().top);
-			resizeImg();
-		});
-*/
+     * 图片头数据加载就绪事件 - 更快获取图片尺寸
+     *
+     * 原理：没有缓存的情况下，用计时器不断验证图片的大小是否发生变化，如果不在变化则为ready
+     *       如果有缓存则w3c浏览器会调用 complete，ie则会走 onload，都不在走 计时器那部分
+     * @param    {String}    图片路径
+     * @param    {Function}    尺寸就绪
+     * @param    {Function}    加载完毕 (可选)
+     * @param    {Function}    加载错误 (可选)
+     * @example imgReady('http://www.google.com.hk/intl/zh-CN/images/logo_cn.png', function () {
+alert('size ready: width=' + this.width + '; height=' + this.height);
+});
+     */
 function preloadimages() {
     var list = [], intervalId = null,
  
@@ -536,3 +538,13 @@ function isSupport (property) {
 
     return false;
 }
+
+
+/*判断是否为iPhone plus 6*/
+var isPhone6p = (function(){
+	var h=window.innerHeight,w=window.innerWidth,useragent = navigator.userAgent.toLowerCase(),isP6p = false;
+	
+	if(useragent.match(/mobile/i)!==null && useragent.match(/iphone/i)!==null && ( h>w ? (Math.abs(w-414)<10 && h<=736) : (Math.abs(w-736)<10) && h<=414)) isP6p = true;
+	
+	return isP6p;
+})()
