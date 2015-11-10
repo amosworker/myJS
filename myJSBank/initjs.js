@@ -48,9 +48,9 @@ Initobj.prototype={
 					};
 		}
 	}()),
-
+	
 	windowWH:function(){
-		var h=window.innnerHeight;
+		var h=window.innerHeight;
 		var w=window.innerWidth;
 		
 		if (typeof h != "number"){
@@ -122,9 +122,25 @@ Ginitobj = new Initobj(); //初始化Initobj对象
 
 
 //动态加载脚本
-function loadScript(url) {
+function loadScript(url,callback) {
 	var script = document.createElement('script');
 	script.type = 'text/javascript';
+	
+	if(!!callback){
+		if(script.readyState){ //IE
+			script.onreadystatechange = function(){
+				if(script.readyState == "loaded" || script.readyState == "complete"){
+					script.onreadystatechange = null;
+					callback();
+				}
+			};
+		}else{ //not IE
+			script.onload = function(){
+				callback();
+			};
+		}
+	}
+	
 	script.src = url;
 	document.getElementsByTagName('head')[0].appendChild(script);
 }
@@ -255,10 +271,6 @@ function getStyle(elem,pro){
      *
      * 原理：没有缓存的情况下，用计时器不断验证图片的大小是否发生变化，如果不在变化则为ready
      *       如果有缓存则w3c浏览器会调用 complete，ie则会走 onload，都不在走 计时器那部分
-     *
-     * @version    2011.05.27
-     * @author    TangBin
-     * @see        http://www.planeart.cn/?p=1121
      * @param    {String}    图片路径
      * @param    {Function}    尺寸就绪
      * @param    {Function}    加载完毕 (可选)
@@ -267,85 +279,81 @@ function getStyle(elem,pro){
 alert('size ready: width=' + this.width + '; height=' + this.height);
 });
      */
-    var imgReady = (function () {
-        var list = [], intervalId = null,
-
-            // 用来执行队列
-            tick = function () {
-                var i = 0;
-                for (; i < list.length; i++) {
-                    list[i].end ? list.splice(i--, 1) : list[i]();
-                }
-                ;
-                !list.length && stop();
-            },
-
-            // 停止所有定时器队列
-            stop = function () {
-                clearInterval(intervalId);
-                intervalId = null;
-            };
-
-        return function (url, ready, load, error) {
-            var onready, width, height, newWidth, newHeight,
-                img = new Image();
-
-            img.src = url;
-
-            // 如果图片被缓存，则直接返回缓存数据
-            if (img.complete) {
-                ready.call(img);
-                load && load.call(img);
-                return;
-            }
-            ;
-
-            width = img.width;
-            height = img.height;
-
-            // 加载错误后的事件
-            img.onerror = function () {
-                error && error.call(img);
-                onready.end = true;
-                img = img.onload = img.onerror = null;
-            };
-
-            // 图片尺寸就绪
-            onready = function () {
-                newWidth = img.width;
-                newHeight = img.height;
-                if (newWidth !== width || newHeight !== height ||
-                    // 如果图片已经在其他地方加载可使用面积检测
-                    newWidth * newHeight > 1024
-                    ) {
-                    ready.call(img);
-                    onready.end = true;
-                }
-                ;
-            };
-            onready();
-
-            // 完全加载完毕的事件
-            img.onload = function () {
-                 // onload在定时器时间差范围内可能比onready快
-                // 这里进行检查并保证onready优先执行
-                !onready.end && onready();
-
-                load && load.call(img);
-
-                // IE gif动画会循环执行onload，置空onload即可
-                img = img.onload = img.onerror = null;
-            };
-
-                // 加入队列中定期执行
-            if (!onready.end) {
-                list.push(onready);
-                // 无论何时只允许出现一个定时器，减少浏览器性能损耗
-                if (intervalId === null) intervalId = setInterval(tick, 40);
-            }
-            ;
+function preloadimages() {
+    var list = [], intervalId = null,
+ 
+    // 用来执行队列
+    tick = function () {
+        var i = 0;
+        for (; i < list.length; i++) {
+            list[i].end ? list.splice(i--, 1) : list[i]();
         };
-    })();
+        !list.length && stop();
+    },
+ 
+    // 停止所有定时器队列
+    stop = function () {
+        clearInterval(intervalId);
+        intervalId = null;
+    };
+ 
+    return function (url, ready, load, error) {
+        var onready, width, height, newWidth, newHeight,
+            img = new Image();
+ 
+        img.src = url;
+ 
+        // 如果图片被缓存，则直接返回缓存数据
+        if (img.complete) {
+            ready.call(img);
+            load && load.call(img);
+            return;
+        };
+ 
+        width = img.width;
+        height = img.height;
+ 
+        // 加载错误后的事件
+        img.onerror = function () {
+            error && error.call(img);
+            onready.end = true;
+            img = img.onload = img.onerror = null;
+        };
+ 
+        // 图片尺寸就绪
+        onready = function () {
+            newWidth = img.width;
+            newHeight = img.height;
+            if (newWidth !== width || newHeight !== height ||
+                // 如果图片已经在其他地方加载可使用面积检测
+                newWidth * newHeight > 1024
+            ) {
+                ready.call(img);
+                onready.end = true;
+            };
+        };
+        onready();
+ 
+        // 完全加载完毕的事件
+        img.onload = function () {
+            // onload在定时器时间差范围内可能比onready快
+            // 这里进行检查并保证onready优先执行
+            !onready.end && onready();
+ 
+            load && load.call(img);
+ 
+            // IE gif动画会循环执行onload，置空onload即可
+            img = img.onload = img.onerror = null;
+        };
+ 
+        // 加入队列中定期执行
+        if (!onready.end) {
+            list.push(onready);
+            // 无论何时只允许出现一个定时器，减少浏览器性能损耗
+            if (intervalId === null) intervalId = setInterval(tick, 40);
+        };
+    };
+};
 
 //点击回到顶部 为obj对象赋予点击回到顶部事件
 function returnToTop(obj)
@@ -393,3 +401,150 @@ function getHost (url) {
     }
     return host;
 }
+
+
+//检查浏览器是否支持input的类型
+/*
+	example:
+		if(!inputSupport("data")){
+			alert("the data input type is not supported");
+		}
+*/
+function inputSupport(inputType){
+	var input = document.createElement('input');
+	input.setAttribute("type",inputType);
+	var val= (input.type !== "text");
+	delete input;
+	return val;
+}
+
+//为window对象添加contains方法 
+;(function(exports){
+    exports.contains = function(pel, cel){ //验证cel节点被pel节点包含
+        // ie
+        if (pel.contains){
+            return pel.contains(cel);
+        }
+        else if(pel.compareDocumentPosition){
+            return !!pel.compareDocumentPosition(cel) & 16;
+        }
+        else{
+            var p;
+            while ((p = cel.parentNode) && p.nodeType === 1){
+                if (pel === p) return true;
+            }
+            return true;
+        }
+    };
+}(window));
+
+
+//检测系统、浏览器版本、引擎、是否为移动端
+var browser = (function(){
+  var userAgent = navigator.userAgent,
+  ua = userAgent.toLowerCase(),
+  browserList = {
+    msie : /(?:msie\s|trident.*rv:)([\w.]+)/i,
+    firefox : /Firefox\/([\w.]+)/i,
+    chrome : /Chrome\/([\w.]+)/i,
+    safari : /version\/([\w.]+).*Safari/i,
+    opera : /(?:OPR\/|Opera.+version\/)([\w.]+)/i
+  },
+  kernels = {
+    MSIE: /(compatible;\smsie\s|Trident\/)[\w.]+/i,
+    Camino: /Camino/i,
+    KHTML: /KHTML/i,
+    Presto: /Presto\/[\w.]+/i,
+    Gecko : /Gecko\/[\w.]+/i,
+    WebKit: /AppleWebKit\/[\w.]+/i
+  },
+  browser = {
+    kernel : 'unknow',
+    version : 'unknow'
+  };
+
+  // 检测浏览器
+  for(var i in browserList){
+    var matchs = ua.match(browserList[i]);
+    browser[i] = matchs ? true : false;
+    if(matchs){
+      browser.version = matchs[1];
+    }
+  }
+
+  // 检测引擎
+  for(var i in kernels){
+    var matchs = ua.match(kernels[i]);
+    if(matchs){
+      browser.kernel = matchs[0];
+    }
+  }
+
+  // 系统
+  var os = ua.match(/(Windows\sNT\s|Mac\sOS\sX\s|Android\s|ipad.*\sos\s|iphone\sos\s)([\d._-]+)/i);
+  browser.os = os!==null ? os[0] : false;
+
+  // 是否移动端
+  browser.mobile = ua.match(/Mobile/i)!==null ? true : false;
+
+  return browser;
+}());
+
+
+/**
+ * 特性检查浏览器是移动端还是PC端的浏览器
+ */
+function browserRedirect() {
+    var isPC = 0;
+    var isMobile = 0;
+    var sUserAgent = navigator.userAgent.toLowerCase();
+    var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+    var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+    var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+    var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+    var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+    var bIsAndroid = sUserAgent.match(/android/i) == "android";
+    var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+    var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+    
+    if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) {
+       isMobile=1;
+    } else {
+       isPC = 1;
+    }
+    
+    return {isMobile:isMobile, isPC:isPC};
+}
+
+
+/**
+ * 特性检查浏览器是否支持css3等属性
+ * @method isSupport
+ * @param {property} 需要检查的css属性
+ * @return {true or false} 真或假
+ */
+function isSupport (property) {
+    var prefix = ["", "webkit", "Moz", "ms", "o"],
+        i = prefix.length,
+        style = document.createElement("div").style;
+
+    while (i--) {
+        if (!prefix[i]) {
+            if ((prefix[i] + property) in style) return true;
+        } else {
+            if ((prefix[i] + property.substr(0, 1).toUpperCase() + property.substr(1)) in style) return true;
+        }
+    }
+
+    return false;
+}
+
+
+/*判断是否为iPhone plus 6*/
+var isPhone6p = (function(){
+	var h=window.innerHeight,w=window.innerWidth,useragent = navigator.userAgent.toLowerCase(),isP6p = false;
+	
+	if(useragent.match(/mobile/i)!==null && useragent.match(/iphone/i)!==null && ( h>w ? (Math.abs(w-414)<10 && h<=736) : (Math.abs(w-736)<10) && h<=414)) isP6p = true;
+	
+	return isP6p;
+})()
