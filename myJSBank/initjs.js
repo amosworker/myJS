@@ -548,3 +548,12 @@ var isPhone6p = (function(){
 	
 	return isP6p;
 })()
+
+
+//对数字经行定长补0
+function stuffZero(num,l){
+	if( l === undefined ) l = 2;
+	var len = ("" + num).length;
+	//因为join需要至少2个元素才能整合所以要+1
+	return Array( l - len > 0 ? (l-len)+1 : 0 ).join('0') + num;
+};
