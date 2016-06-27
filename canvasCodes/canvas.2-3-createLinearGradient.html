@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#canvas{
+			width:500px;
+			height:400px;
+			display:block;
+			margin:100px auto;
+			outline:1px solid #ccc;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="800" height="600">Canvas not supported</canvas>
+	<!-- <script src="js/canvasTools.js"></script> -->
+	<script>
+		var canvas =  document.getElementById('canvas'),
+			context = canvas.getContext('2d'),
+			//gradient = context.createLinearGradient(0,0,canvas.width,0);
+			gradient = context.createRadialGradient(canvas.width/2,canvas.height/2,0,canvas.width/2,canvas.height/2,canvas.width/2);
+
+		gradient.addColorStop(0,    'blue');
+		gradient.addColorStop(0.25, 'white');
+		gradient.addColorStop(0.5,  'purple');
+		gradient.addColorStop(0.75, 'red');
+		gradient.addColorStop(1,    'yellow');
+
+		context.fillStyle = gradient;
+		context.fillRect(0,0,canvas.width,canvas.height);
+	</script>
+</body>
+</html>
