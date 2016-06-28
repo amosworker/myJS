@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>和睦日历</title>
+    <link rel="stylesheet" href="reset.css"/>
+    <style>
+        #cal{ width:80%; margin:20px auto; text-align: center;}
+        .calendarWrap{width:358px;padding:5px; background-color: #666; margin:5px; display:inline-block; font-size:14px;}
+        .calendar{width:357px; height:410px; padding:1px 0 1px 1px; background-color: #fff;}
+        .calendar li{width:50px; height:50px; margin:0 1px 1px 0; background-color: #eee; float: left; text-align:center; line-height:48px; position:relative;}
+        .calendar li.head{ width:100%;}
+        .calendar li.day-head{ background-color:#aaaaaa;}
+        .calendar li.pos-1{ margin-left:0px;}
+        .calendar li.pos-2{ margin-left:51px;}
+        .calendar li.pos-3{ margin-left:102px;}
+        .calendar li.pos-4{ margin-left:153px;}
+        .calendar li.pos-5{ margin-left:204px;}
+        .calendar li.pos-6{ margin-left:255px;}
+        .calendar li.pos-7{ margin-left:306px;}
+        .calendar li.today{ background-color:#00ff00; color:#fff;}
+        .calendar li.active:before{content:'☺'; display:block; position:absolute; left:2px; top:2px; width:20px; height:20px; line-height: 20px; -webkit-border-radius: 50% 50%; -moz-border-radius: 50% 50%; border-radius: 50% 50%; background-color: red; color:#fff; }
+    </style>
+</head>
+<body>
+  <h1 class="text-center">2016</h1>
+  <div id="cal"></div>
+
+<script src="jquery.min.js"></script>
+<script>
+    var data = ['2016-4-14','2016-4-15'];
+    function calendar(){
+        this.weekname = new Array("Sun","Mon","Tue","Wed","Thu","Fri","Sat");
+        this.monthname= new Array("January","February","March","April","May","June","July","August","september","October","November","December");
+        this.drawYear = function(year,containerObj){
+            var fragment = document.createDocumentFragment();
+
+            for(var i=1; i<=12; i++){
+                var oDiv = document.createElement('div');
+                oDiv.className = "calendarWrap";
+                this.drawMonth(year,i,oDiv);
+                fragment.appendChild(oDiv);
+            }
+            containerObj.appendChild(fragment);
+        }
+        this.drawMonth = function(year,month,containerObj){
+            var htmlstr = '<ul class="calendar clearfix" data-ym="'+ year+'-'+ month +'">';
+            var dateobj =  new Date();
+            var nowYear = dateobj.getFullYear();
+            var nowMonth = dateobj.getMonth();
+            var nowDate = dateobj.getDate();
+
+            dateobj.setFullYear(year,month-1,1);
+            var montharr = this.getMdays(year);
+            var firstday = dateobj.getDay()+1;
+
+            htmlstr +=  '<li class="head"><h2>'+this.monthname[month-1]+'</h2></li>';
+            for(var i=0;i<this.weekname.length;i++){
+                htmlstr += '<li class="day-head">'+this.weekname[i]+'</li>';
+            }
+
+            for(var j=1;j<=montharr[month-1];j++){
+                if(j==1){
+                    htmlstr += '<li class="pos-'+ firstday +'">'+j+'</li>';
+                    firstday = (firstday+montharr[i])%7;
+                    firstday = firstday == 0 ? 7 : firstday;
+                }else{
+                    if(year==nowYear && (month-1)==nowMonth && j==nowDate){
+                        htmlstr += '<li class="today">'+j+'</li>';
+                    }else{
+                        htmlstr += '<li data-date="'+ year+'-'+month+'-'+j+'">'+j+'</li>';
+                    }
+                }
+            }
+
+            htmlstr += '</ul>';
+            containerObj.innerHTML = htmlstr;
+        }
+
+        this.getMdays = function (year){
+            return new Array(31,28+is_leapYear(year),31,30,31,31,30,31,30,31,30,31);
+        }
+
+        function is_leapYear(year){
+            return year%100 == 0 ? (year%400==0 ? 1 : 0) : (year%4==0?1:0);
+        }
+    }
+
+    var calendar1 =  new calendar();
+
+    var yearNum = 2016;
+    //calendar1.drawMonth(2016,4,document.getElementById('cal'));
+    calendar1.drawYear(yearNum,document.getElementById('cal'));
+
+    data.forEach(function(v){
+        console.log(v);
+        var tmp = v.split('-');
+        if(tmp[0] == yearNum){
+            console.log($('ul[data-ym='+ tmp[0]+'-'+tmp[1]+']').children('li').length);
+            $('ul[data-ym='+ tmp[0]+'-'+tmp[1]+']').children('li').eq(tmp[2]*1+7).addClass('active');
+        }
+    })
+
+</script>
+</body>
+</html>
