@@ -557,3 +557,42 @@ function stuffZero(num,l){
 	//因为join需要至少2个元素才能整合所以要+1
 	return Array( l - len > 0 ? (l-len)+1 : 0 ).join('0') + num;
 };
+
+
+//检测元素是否支持特定事件
+var isEventSupported = (function(){//使用模块模式
+    var TAGNAMES = {//特定元素上的特定事件
+      'select':'input','change':'input',
+      'submit':'form','reset':'form',
+      'error':'img','load':'img','abort':'img'
+    }
+
+    function isEventSupported(eventName, element) {
+      element = element || document.createElement(TAGNAMES[eventName] || 'div');
+      eventName = 'on' + eventName;
+
+      // When using `setAttribute`, IE skips "unload", WebKit skips "unload" and "resize", whereas `in` "catches" those
+      var isSupported = (eventName in element);//DOM0
+
+      if (!isSupported) {
+        // if it has no `setAttribute` (i.e. doesn't implement Node interface), try generic element
+        if (!element.setAttribute) {
+          element = document.createElement('div');
+        }
+        if (element.setAttribute && element.removeAttribute) {
+          element.setAttribute(eventName, '');
+          isSupported = typeof element[eventName] == 'function';
+
+          // if property was created, "remove it" (by setting value to `undefined`)
+          if (typeof element[eventName] != 'undefined') {
+            element[eventName] = void 0;
+          }
+          element.removeAttribute(eventName);
+        }
+      }
+
+      element = null;
+      return isSupported;
+    }
+    return isEventSupported;
+  })();
