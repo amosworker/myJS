@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue.js test1</title>
+	<style>
+		
+	</style>
+</head>
+<body>
+
+	<div id="example">
+	  <input type="text" v-model="message">
+	  <child v-bind:mess="message">
+	  	<p>This is some original content</p>
+    	<p>This is some more original content</p>
+	  </child>
+	</div>
+
+
+	<script src="dist/vue.js"></script>
+	<script>
+		new Vue({
+			  el:'#example',
+			  data:{
+					message:"ailala"
+			  },
+			  components:{
+			  	child:{
+			    	props: ['mess'],
+			        template: '<div>\
+						         <h3>{{mess}}</h3>\
+								 <slot>如果没有分发内容则显示我。</slot>\
+						       </div>'
+			    }
+			  }
+			});
+	</script>
+</body>
+</html>

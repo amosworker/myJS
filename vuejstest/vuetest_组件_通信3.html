@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>vue.js test1</title>
+	<style>
+		
+	</style>
+</head>
+<body>
+
+	<div id="v-model-example">
+	  <p>{{ message }}</p>
+	  <!-- <my-input label="Message" v-model="message"></my-input> -->
+	  <my-input label="Message" v-bind:value="message" v-on:input="message = arguments[0]"></my-input>
+
+	</div>
+
+
+	<script src="dist/vue.js"></script>
+	<script>
+		new Vue({
+			  el: '#v-model-example',
+			  data: {
+			    message: 'hello'
+			  },
+			  components:{
+			  	'my-input':{
+			  		props: ['value', 'label'],
+			  		template: '\
+					  <div class="form-group">\
+					    <label v-bind:for="randomId">{{ label }}:</label>\
+					    <input v-bind:id="randomId" v-bind:value="value" v-on:input="onInput">\
+					  </div>\
+					',
+					data: function () {
+					  return {
+					    randomId: 'input-' + Math.random()
+					  }
+					},
+					methods: {
+					  onInput: function (event) {
+					    this.$emit('input', event.target.value);//为什么要用$emit来出发input事件，而子组件里的input元素的input事件不能出发父组件里的数据变更，是因为父组件监听的是子组件本身的事件，而不是子组件内某个元素的事件
+					  }
+					}
+			  	}
+			  }
+			});
+	</script>
+</body>
+</html>
