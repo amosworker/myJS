@@ -108,9 +108,9 @@ Initobj.prototype={
 
 		return {
 			top : rect.top - top,//元素上边距离浏览器窗口上边的距离
-			bottom : rect.bottom - top,//元素右边距离浏览器窗口左边的距离
-			left : rect.left - left,//元素下边距离浏览器窗口上边的距离
-			right : rect.right - left//元素左边距离浏览器窗口左边的距离
+			bottom : rect.bottom - top,//元素下边距离浏览器窗口上边的距离
+			left : rect.left - left,//元素左边距离浏览器窗口左边的距离
+			right : rect.right - left//元素右边距离浏览器窗口左边的距离
 		}
 	}
 
