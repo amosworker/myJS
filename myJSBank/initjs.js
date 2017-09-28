@@ -119,6 +119,21 @@ Initobj.prototype={
 Ginitobj = new Initobj(); //初始化Initobj对象
 
 
+//解析url路径参数
+function getValFromUrlKey(key){
+	var urlParams = window.location.href.split('/');
+	var keyIndex = urlParams.indexOf(key),
+		value = window.decodeURIComponent(urlParams[keyIndex + 1]);
+
+	return value || '';
+}
+//解析url参数 
+function getQueryString(name) { 
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
+	var r = window.location.search.substr(1).match(reg); 
+	if (r != null) return unescape(r[2]); return null; 
+}
+
 
 
 //动态加载脚本
